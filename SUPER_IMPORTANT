@@ -1,0 +1,181 @@
+IN Ext
+
+access-list 101 permit tcp any 10.0.1.0 0.0.0.255 eq 80
+access-list 101 permit tcp any 10.0.1.0 0.0.0.255 eq 443
+access-list 101 permit tcp any 10.0.1.0 0.0.0.255 eq 465
+access-list 101 permit tcp any 10.0.1.0 0.0.0.255 eq 123
+
+
+OUT Ext
+
+access-list 102 permit tcp 10.0.1.0 0.0.0.255 any eq 80
+access-list 102 permit tcp 10.0.1.0 0.0.0.255 any eq 443
+access-list 102 permit tcp 10.0.1.0 0.0.0.255 any eq 465
+access-list 102 permit tcp 10.0.1.0 0.0.0.255 any eq 123
+access-list 102 permit tcp 10.0.1.0 0.0.0.255 any eq 53
+
+
+IN DMZ
+
+access-list 103 permit tcp 10.0.1.0 0.0.0.255 any eq 80
+access-list 103 permit tcp 10.0.1.0 0.0.0.255 any eq 443
+access-list 103 permit tcp 10.0.1.0 0.0.0.255 any eq 465
+access-list 103 permit tcp 10.0.1.0 0.0.0.255 any eq 123
+access-list 103 permit tcp 10.0.1.0 0.0.0.255 any eq 53
+
+OUT DMZ
+
+access-list 104 permit tcp any 10.0.1.0 0.0.0.255 eq 80
+access-list 104 permit tcp any 10.0.1.0 0.0.0.255 eq 443
+access-list 104 permit tcp any 10.0.1.0 0.0.0.255 eq 465
+access-list 104 permit tcp any 10.0.1.0 0.0.0.255 eq 123
+access-list 104 permit tcp any 10.0.1.0 0.0.0.255 eq 53
+access-list 104 permit tcp 10.0.0.0 0.0.0.255 10.0.1.0 0.0.0.255 eq 22
+
+
+IN PRIV
+
+access-list 105 permit tcp 10.0.1.0 0.0.0.255 10.0.0.0 0.0.0.255 eq 80
+access-list 105 permit tcp 10.0.1.0 0.0.0.255 10.0.0.0 0.0.0.255 eq 443
+access-list 105 permit tcp 10.0.1.0 0.0.0.255 10.0.0.0 0.0.0.255 eq 465
+access-list 105 permit tcp 10.0.1.0 0.0.0.255 10.0.0.0 0.0.0.255 eq 123
+access-list 105 permit tcp 10.0.1.0 0.0.0.255 10.0.0.0 0.0.0.255 eq 53
+access-list 105 permit tcp 10.0.1.0 0.0.0.255 10.0.0.0 0.0.0.255 eq 22
+
+
+OUT PRIV
+
+access-list 106 permit tcp 10.0.0.0 0.0.0.255 10.0.1.0 0.0.0.255 eq 80
+access-list 106 permit tcp 10.0.0.0 0.0.0.255 10.0.1.0 0.0.0.255 eq 443
+access-list 106 permit tcp 10.0.0.0 0.0.0.255 10.0.1.0 0.0.0.255 eq 465
+access-list 106 permit tcp 10.0.0.0 0.0.0.255 10.0.1.0 0.0.0.255 eq 123
+access-list 106 permit tcp 10.0.0.0 0.0.0.255 10.0.1.0 0.0.0.255 eq 53
+access-list 106 permit tcp 10.0.0.0 0.0.0.255 10.0.1.0 0.0.0.255 eq 22
+
+Conf CISCO vierge
+
+Using 1579 out of 262136 bytes
+!
+version 12.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname Router
+!
+boot-start-marker
+boot-end-marker
+!
+logging message-counter syslog
+no logging console
+!
+no aaa new-model
+service-module wlan-ap 0 bootimage autonomous
+!
+!
+ip source-route
+!
+!
+!
+!         
+ip cef
+no ipv6 cef
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+
+shutdown vlan 2
+
+shutdown vlan 10
+
+! 
+!
+!
+archive
+ log config
+  hidekeys
+!
+!
+!
+!         
+!
+interface BRI0
+ no ip address
+ encapsulation hdlc
+ shutdown
+ isdn termination multidrop
+!
+interface FastEthernet0
+!
+interface FastEthernet1
+!
+interface FastEthernet2
+!
+interface FastEthernet3
+!
+interface FastEthernet4
+!
+interface FastEthernet5
+!
+interface FastEthernet6
+!
+interface FastEthernet7
+!         
+interface FastEthernet8
+ ip address 10.0.2.1 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0
+ ip address 192.168.142.65 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface wlan-ap0
+ description Service module interface to manage the embedded AP
+ no ip address
+ shutdown
+ arp timeout 0
+!
+interface Wlan-GigabitEthernet0
+ description Internal switch interface connecting to the embedded AP
+!
+interface Vlan1
+ ip address 10.0.0.1 255.255.255.0
+!
+interface Vlan2
+ no ip address
+!
+ip forward-protocol nd
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport input all
+ transport output pad telnet rlogin udptn ssh
+line aux 0
+line vty 0 4
+ login
+!
+scheduler max-task-time 5000
+end
+
